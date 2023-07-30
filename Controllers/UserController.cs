@@ -47,7 +47,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("[action]")]
-    public IActionResult Logout(UserDto dto)
+    public IActionResult Logout(Guid userId)
     {
         // Logout user
         return Ok();
