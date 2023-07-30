@@ -1,14 +1,15 @@
 # Contact List API
 
-## How to Run
-
+## Run: API
 - `dotnet restore`
 - `dotnet ef database update`
-- `dotnet run`
+- `dotnet run --project API\ContactListAPI.csproj`
 - `https://localhost:5012/swagger`
 
+## Run: Test
+- `dotnet test Test`
 
 ## Possible Improvements
 - JWT authentication
 - Validations
-- 
+

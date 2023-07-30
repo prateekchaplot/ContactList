@@ -19,7 +19,9 @@ public class UserController : ControllerBase
     [HttpPost("[action]")]
     public IActionResult Create(UserDto dto)
     {
-        // TODO: Check if a user exists
+        // Check if a user exists
+        if (string.IsNullOrEmpty(dto.Username) || string.IsNullOrEmpty(dto.Password))
+            return BadRequest();
 
         // Add user to db
         var user = new User { Username = dto.Username, Password = dto.Password };
