@@ -29,6 +29,7 @@ public class UserControllerTests
         return new DataContext(options);
     }
 
+    /// Create
     // Test case for successful user creation
     [Fact]
     public void Create_ValidUser_ReturnsCreatedResult()
@@ -97,5 +98,70 @@ public class UserControllerTests
         // You can also check other properties if needed
         Assert.Equal(userDto.Username, userInDatabase.Username);
         Assert.Equal(userDto.Password, userInDatabase.Password);
+    }
+
+    /// Login
+    // Test case for successful login
+    [Fact]
+    public void Login_ValidUser_ReturnsOkResult()
+    {
+        // Arrange
+        var userDto = new UserDto { Username = "testuser", Password = "testpassword" };
+        var mockDataContext = InMemoryContext();
+        var controller = new UserController(mockDataContext);
+        var user = new User { Username = userDto.Username, Password = userDto.Password };
+        mockDataContext.Users.Add(user);
+        mockDataContext.SaveChanges();
+
+        // Act
+        var result = controller.Login(userDto) as OkObjectResult;
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(200, result.StatusCode); // HTTP 200 OK
+        Assert.NotNull(result.Value);
+        var loggedInUser = result.Value as User;
+        Assert.NotNull(loggedInUser);
+        Assert.Equal(userDto.Username, loggedInUser.Username);
+        Assert.Equal(userDto.Password, loggedInUser.Password);
+    }
+
+    // Test case for login with a user that does not exist
+    [Fact]
+    public void Login_NonExistentUser_ReturnsBadRequest()
+    {
+        // Arrange
+        var userDto = new UserDto { Username = "testuser", Password = "testpassword" };
+        var mockDataContext = InMemoryContext();
+        var controller = new UserController(mockDataContext);
+
+        // Act
+        var result = controller.Login(userDto) as BadRequestObjectResult;
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(400, result.StatusCode); // HTTP 400 Bad Request
+        Assert.Equal("User not found.", result.Value);
+    }
+
+    // Test case for login with a user and an incorrect password
+    [Fact]
+    public void Login_IncorrectPassword_ReturnsBadRequest()
+    {
+        // Arrange
+        var userDto = new UserDto { Username = "testuser", Password = "testpassword" };
+        var mockDataContext = InMemoryContext();
+        var controller = new UserController(mockDataContext);
+        var user = new User { Username = userDto.Username, Password = "incorrectpassword" };
+        mockDataContext.Users.Add(user);
+        mockDataContext.SaveChanges();
+
+        // Act
+        var result = controller.Login(userDto) as BadRequestObjectResult;
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(400, result.StatusCode); // HTTP 400 Bad Request
+        Assert.Equal("Password don't match.", result.Value);
     }
 }

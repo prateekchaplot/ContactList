@@ -26,7 +26,8 @@ public class ContactController : ControllerBase
     [HttpPost("[action]")]
     public IActionResult Create(Guid userId, ContactDto dto)
     {
-        //TODO: Check if already exists
+        if (userId == Guid.Empty)
+            return BadRequest();
 
         // Add contact
         var contact = new Contact { Name = dto.Name, Phone = dto.Phone, UserId = userId };
